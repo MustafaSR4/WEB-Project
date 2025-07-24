@@ -1,0 +1,105 @@
+
+-- Create customers table
+CREATE TABLE customers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    national_id VARCHAR(20) NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    address VARCHAR(255) NOT NULL,
+    dob DATE,
+    email VARCHAR(100) NOT NULL,
+    mobile VARCHAR(20),
+    phone VARCHAR(20),
+    username VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL
+);
+
+-- Create owners table
+CREATE TABLE owners (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    national_id VARCHAR(20) NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    address VARCHAR(255) NOT NULL,
+    dob DATE,
+    email VARCHAR(100) NOT NULL,
+    mobile VARCHAR(20),
+    phone VARCHAR(20),
+    bank_name VARCHAR(100),
+    bank_branch VARCHAR(100),
+    account_number VARCHAR(50),
+    username VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    city VARCHAR(100)
+);
+
+-- Create managers table
+CREATE TABLE managers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    username VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL
+);
+
+-- Create flats table
+CREATE TABLE flats (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    owner_id INT,
+    location VARCHAR(100),
+    address VARCHAR(255),
+    monthly_rent DECIMAL(10,2),
+    bedrooms INT,
+    bathrooms INT,
+    is_furnished BOOLEAN DEFAULT 0,
+    is_approved INT DEFAULT 0,
+    is_rented BOOLEAN DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (owner_id) REFERENCES owners(id)
+);
+
+-- Create rentals table
+CREATE TABLE rentals (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    flat_id INT,
+    customer_id INT,
+    start_date DATE,
+    end_date DATE,
+    credit_card VARCHAR(20),
+    FOREIGN KEY (flat_id) REFERENCES flats(id),
+    FOREIGN KEY (customer_id) REFERENCES customers(id)
+);
+
+-- Create appointments table
+CREATE TABLE appointments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    flat_id INT,
+    customer_id INT,
+    date DATE,
+    time TIME,
+    status ENUM('pending', 'accepted', 'rejected') DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (flat_id) REFERENCES flats(id),
+    FOREIGN KEY (customer_id) REFERENCES customers(id)
+);
+
+-- Create messages table
+CREATE TABLE messages (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    to_role VARCHAR(20),
+    to_id INT,
+    from_role VARCHAR(20),
+    from_id INT,
+    title VARCHAR(255),
+    body TEXT,
+    status ENUM('unread', 'read') DEFAULT 'unread',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Insert test users
+INSERT INTO managers (name, email, username, password)
+VALUES ('Site Manager', 'manager@example.com', 'manager@example.com', '123456a');
+
+INSERT INTO owners (national_id, name, address, dob, email, mobile, phone, bank_name, bank_branch, account_number, username, password, city)
+VALUES ('112233', 'Owner Test', 'Birzeit, Block A', '1980-01-01', 'owner@example.com', '0599000000', '022800000', 'Bank of Palestine', 'Main', '123456789', 'owner@example.com', '123456b', 'Birzeit');
+
+INSERT INTO customers (national_id, name, address, dob, email, mobile, phone, username, password)
+VALUES ('334455', 'Customer Test', 'Ramallah, Apt 3', '1995-06-15', 'customer@example.com', '0599111122', '022811223', 'customer@example.com', '123456c');
